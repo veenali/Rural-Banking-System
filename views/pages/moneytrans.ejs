@@ -1,0 +1,27 @@
+<form action="/moneytrans" method="POST" id="moneytransForm" class="p-3 mt-5 border border-3 rounded">
+    <div class="mb-3 row">
+        <label for="balance" class="col-sm-3 col-form-label">Your Balance</label>
+        <div class="col-sm-9">
+            <input type="text" name="balance" readonly class="form-control-plaintext" id="balance" value=<%=balance %> >
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="withdrawAmount" class="col-sm-3 col-form-label">Sender email id</label>
+        <div class="col-sm-9">
+            <input type="email" name="email" class="form-control" id="email" required>
+            <div style="color: red; display: none;" id="invalid-email">Invalid Email</div>
+            <div style="color: red; display: none;" id="emailRequired">This field is required</div>
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="transferAmount" class="col-sm-3 col-form-label">Amount to be transferred</label>
+        <div class="col-sm-9">
+            <input type="number" name="transferAmount" class="form-control" id="transferAmount" required>
+            <div style="color: red; display: none;" id="invalid-transferAmount">Invalid amount</div>
+            <div style="color: red; display: none;" id="transferAmountRequired">This field is required</div>
+        </div>
+    </div>
+    <button type="button" id="transferSubmitBtn" class="btn btn-primary">Submit</button>
+</form>
+
+<script src="/js/moneytrans.js"></script>

@@ -1,0 +1,9 @@
+#invalid-input,
+#emailRequiredError,
+#passwordRequiredError {
+    display: none;
+    color: red;
+    font-size: 12px;
+    opacity: .9;
+    margin-top: 4px;
+}

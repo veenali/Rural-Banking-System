@@ -1,0 +1,19 @@
+<form action="/withdraw" method="POST" id="withdrawForm" class="p-3 mt-5 border border-3 rounded">
+    <div class="mb-3 row">
+        <label for="balance" class="col-sm-3 col-form-label">Balance</label>
+        <div class="col-sm-9">
+            <input type="text" name="balance" readonly class="form-control-plaintext" id="balance" value=<%=balance %> >
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="withdrawAmount" class="col-sm-3 col-form-label">Withdrawing amount</label>
+        <div class="col-sm-9">
+            <input type="number" name="withdrawAmount" class="form-control" id="withdrawAmount" required>
+            <div style="color: red; display: none;" id="invalid-withdrawAmount">Invalid number</div>
+            <div style="color: red; display: none;" id="withdrawAmountRequired">This field is required</div>
+        </div>
+    </div>
+    <button type="button" id="withdrawSubmitBtn" class="btn btn-primary">Submit</button>
+</form>
+
+<script src="/js/withdraw.js"></script>
