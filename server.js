@@ -169,7 +169,7 @@ app.post('/moneytrans', isAuthenticated, async(req, res, next) => {
     // res.send(req.body)
 })
 
-const port = 8080 | process.env.PORT
-app.listen(8080, () => {
+const port = process.env.PORT || 8080
+app.listen(port, () => {
     console.log(`Listening on port ${port}`);
 })
