@@ -135,7 +135,7 @@ app.post('/deposit', isAuthenticated, async(req, res, next) => {
 
 app.post('/moneytrans', isAuthenticated, async(req, res, next) => {
     const { email } = req.cookies.userData
-    const receiverEmail = req.body.email
+    const receiverEmail = req.body.receiverEmail
     const transferAmount = req.body.transferAmount
     const sender = await User.findOne({ email })
     const receiver = await User.findOne({ email: receiverEmail })

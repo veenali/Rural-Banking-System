@@ -2,7 +2,7 @@ const transferAmount = document.getElementById("transferAmount")
 const invalidTransferAmount = document.getElementById("invalid-transferAmount")
 const transferSubmitBtn = document.getElementById("transferSubmitBtn")
 const transferAmountRequired = document.getElementById("transferAmountRequired")
-const email = document.getElementById("senderEmail")
+const receiverEmail = document.getElementById("receiverEmail")
 const emailRequired = document.getElementById("emailRequired")
 const moneytransForm = document.getElementById("moneytransForm")
 
@@ -14,7 +14,7 @@ transferAmount.addEventListener('input', () => {
 })
 
 transferSubmitBtn.addEventListener('click', () => {
-    if (email.value === "")
+    if (receiverEmail.value === "")
         emailRequired.style.display = 'block'
     else
         emailRequired.style.display = 'none'
@@ -22,7 +22,7 @@ transferSubmitBtn.addEventListener('click', () => {
         transferAmountRequired.style.display = 'block'
     else
         transferAmountRequired.style.display = 'none'
-    if (transferAmount.value > 0 && email.value !== "")
+    if (transferAmount.value > 0 && receiverEmail.value !== "")
         moneytransForm.submit()
     else
         transferAmount.focus()
