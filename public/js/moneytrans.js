@@ -2,7 +2,7 @@ const transferAmount = document.getElementById("transferAmount")
 const invalidTransferAmount = document.getElementById("invalid-transferAmount")
 const transferSubmitBtn = document.getElementById("transferSubmitBtn")
 const transferAmountRequired = document.getElementById("transferAmountRequired")
-const email = document.getElementById("email")
+const email = document.getElementById("senderEmail")
 const emailRequired = document.getElementById("emailRequired")
 const moneytransForm = document.getElementById("moneytransForm")
 

@@ -1,0 +1,36 @@
+<div class="table-responsive">
+    <table class="table table-bordered table-hover my-4">
+        <thead class="table-light">
+            <tr>
+                <!-- <th scope="col">#</th> -->
+                <th scope="col">From</th>
+                <th scope="col">To</th>
+                <th scope="col">Action</th>
+                <th scope="col">Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% for( let data of history ) { %>
+                <tr>
+                    <!-- <th scope="row">1</th> -->
+                    <td>
+                        <%= data.fromEmail %>
+                    </td>
+                    <td>
+                        <% if (data.type === 'moneytrans') { %>
+                            <%= data.toEmail %>
+                                <% } else { %>
+                                    -
+                                    <% } %>
+                    </td>
+                    <td>
+                        <%= data.type %>
+                    </td>
+                    <td>
+                        <%= data.message %>
+                    </td>
+                </tr>
+                <% } %>
+        </tbody>
+    </table>
+</div>

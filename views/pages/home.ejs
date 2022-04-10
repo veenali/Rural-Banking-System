@@ -1,29 +1,32 @@
 <%- include('../partials/head') %>
     <link rel="stylesheet" href="/css/index.css">
+    <%- include('../partials/navbar') %>
 
-    <body>
-        <div class="d-flex justify-content-center align-items-center mt-3 p-4">
-            <div class="flex-grow-1">
-                <nav>
-                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                        <button class="nav-link active" id="nav-withdraw-tab" data-bs-toggle="tab" data-bs-target="#nav-withdraw" type="button" role="tab" aria-controls="nav-withdraw" aria-selected="true">Withdraw</button>
-                        <button class="nav-link" id="nav-deposit-tab" data-bs-toggle="tab" data-bs-target="#nav-deposit" type="button" role="tab" aria-controls="nav-deposit" aria-selected="false">Deposit</button>
-                        <button class="nav-link" id="nav-moneytrans-tab" data-bs-toggle="tab" data-bs-target="#nav-moneytrans" type="button" role="tab" aria-controls="nav-moneytrans" aria-selected="false">Money Transfer</button>
-                        <button class="nav-link" id="nav-details-tab" data-bs-toggle="tab" data-bs-target="#nav-details" type="button" role="tab" aria-controls="nav-details" aria-selected="false">Your details</button>
+        <body>
+            <div class="d-flex justify-content-center align-items-center mt-3 p-4">
+                <div class="flex-grow-1">
+                    <nav>
+                        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                            <button class="nav-link active" id="nav-withdraw-tab" data-bs-toggle="tab" data-bs-target="#nav-withdraw" type="button" role="tab" aria-controls="nav-withdraw" aria-selected="true">Withdraw</button>
+                            <button class="nav-link" id="nav-deposit-tab" data-bs-toggle="tab" data-bs-target="#nav-deposit" type="button" role="tab" aria-controls="nav-deposit" aria-selected="false">Deposit</button>
+                            <button class="nav-link" id="nav-moneytrans-tab" data-bs-toggle="tab" data-bs-target="#nav-moneytrans" type="button" role="tab" aria-controls="nav-moneytrans" aria-selected="false">Money Transfer</button>
+                            <button class="nav-link" id="nav-transhistory-tab" data-bs-toggle="tab" data-bs-target="#nav-transhistory" type="button" role="tab" aria-controls="nav-transhistory" aria-selected="false">Transaction History</button>
+                        </div>
+                    </nav>
+                    <div class="tab-content" id="nav-tabContent">
+                        <div class="tab-pane fade show active" id="nav-withdraw" role="tabpanel" aria-labelledby="nav-withdraw-tab">
+                            <%- include('./withdraw', {balance: user.balance}) %>
+                        </div>
+                        <div class="tab-pane fade" id="nav-deposit" role="tabpanel" aria-labelledby="nav-deposit-tab">
+                            <%- include('./deposit') %>
+                        </div>
+                        <div class="tab-pane fade" id="nav-moneytrans" role="tabpanel" aria-labelledby="nav-moneytrans-tab">
+                            <%- include('./moneytrans', {balance: user.balance}) %>
+                        </div>
+                        <div class="tab-pane fade" id="nav-transhistory" role="tabpanel" aria-labelledby="nav-transhistory-tab">
+                            <%- include('./transactionHistory', {history}) %>
+                        </div>
                     </div>
-                </nav>
-                <div class="tab-content" id="nav-tabContent">
-                    <div class="tab-pane fade show active" id="nav-withdraw" role="tabpanel" aria-labelledby="nav-withdraw-tab">
-                        <%- include('./withdraw', {balance: user.balance}) %>
-                    </div>
-                    <div class="tab-pane fade" id="nav-deposit" role="tabpanel" aria-labelledby="nav-deposit-tab">
-                        <%- include('./deposit') %>
-                    </div>
-                    <div class="tab-pane fade" id="nav-moneytrans" role="tabpanel" aria-labelledby="nav-moneytrans-tab">
-                        <%- include('./moneytrans', {balance: user.balance}) %>
-                    </div>
-                    <div class="tab-pane fade" id="nav-details" role="tabpanel" aria-labelledby="nav-details-tab">Deta</div>
                 </div>
             </div>
-        </div>
-    </body>
+        </body>

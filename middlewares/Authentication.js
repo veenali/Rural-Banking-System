@@ -1,5 +1,9 @@
 module.exports.isAuthenticated = (req, res, next) => {
-    const isAuth = req.cookies.userDate ? req.cookies.userDate : ""
-    console.log(req.cookies);
-    if (isAuth) return next()
+    if (req.cookies.userData) return next()
+    return res.redirect('/')
+}
+
+module.exports.isLoggedIn = (req, res, next) => {
+    if (req.cookies.userData) return res.redirect('/home')
+    return next()
 }

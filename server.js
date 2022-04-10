@@ -1,31 +1,62 @@
 const express = require('express')
 const app = express()
-var cookieParser = require('cookie-parser')
+const cookieParser = require('cookie-parser')
 const User = require('./models/User')
+const session = require('express-session')
+require('dotenv').config()
+
+// const passport = require('passport')
+// require('./passport-config.js')
 
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 app.set('view engine', 'ejs');
+app.use(session({
+        secret: 'itsasecret',
+        resave: false,
+        saveUninitialized: true
+    }))
+    // app.use(passport.initialize())
+    // app.use(passport.session())
 
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/RuralBanking')
+const dbURL = process.env.MONGO_URL
+mongoose.connect(dbURL)
+    .then(() => console.log("Database connection successful"))
     .catch(err => console.log(err))
 
-const { isAuthenticated } = require('./middlewares/Authentication');
+const { isAuthenticated, isLoggedIn } = require('./middlewares/Authentication');
+const TransactionHistory = require('./models/TransactionHistory');
+
+
+app.use((req, res, next) => {
+    res.locals.userData = req.cookies.userData ? req.cookies.userData : ""
+    next()
+})
+
+app.get('/test', isAuthenticated, (req, res, next) => {
+    res.send("TEST DONE")
+})
 
 app.get('/', (req, res) => {
     res.render('pages/index')
 })
 
-app.get('/home', async(req, res, next) => {
+app.get('/home', isAuthenticated, async(req, res, next) => {
     const { email } = req.cookies.userData
     const user = await User.findOne({ email })
+    const history = await TransactionHistory.find({ from: user._id })
     if (user)
-        res.render('pages/home', { user })
+        res.render('pages/home', { user, history })
 })
 
-app.post('/login', async(req, res) => {
+app.post('/logout', isAuthenticated, async(req, res, next) => {
+    res.clearCookie('userData')
+    res.redirect('/')
+})
+
+app.post('/login', isLoggedIn, async(req, res) => {
     console.log(req.body);
     const { email, password } = req.body
     await User.findOne({ email })
@@ -50,7 +81,7 @@ app.post('/login', async(req, res) => {
         })
 })
 
-app.post('/withdraw', async(req, res, next) => {
+app.post('/withdraw', isAuthenticated, async(req, res, next) => {
     const { email } = req.cookies.userData
     const { withdrawAmount } = req.body
     const user = await User.findOne({ email })
@@ -58,9 +89,17 @@ app.post('/withdraw', async(req, res, next) => {
         const balance = user.balance
         if (balance > withdrawAmount) {
             const newAmount = balance - parseInt(withdrawAmount);
+            const history = {
+                from: user._id,
+                fromEmail: user.email,
+                type: 'withdraw',
+                message: `Amount withdrawn ${withdrawAmount}`
+            }
             const updatedUser = await User.findOneAndUpdate({ email }, { balance: newAmount }, { new: true })
             if (updatedUser) {
                 console.log(updatedUser);
+                const transHistory = await new TransactionHistory(history)
+                await transHistory.save()
                 res.send(`Amount withdrawed : ${withdrawAmount}. Remaining balance : ${updatedUser.balance}`)
             }
         } else {
@@ -71,42 +110,66 @@ app.post('/withdraw', async(req, res, next) => {
     }
 })
 
-app.post('/deposit', async(req, res, next) => {
+app.post('/deposit', isAuthenticated, async(req, res, next) => {
     const { email } = req.cookies.userData
     const { depositAmount } = req.body
     const user = await User.findOne({ email })
     if (user) {
+        const history = {
+            from: user._id,
+            fromEmail: user.email,
+            type: 'deposit',
+            message: `Amount deposited ${depositAmount}`
+        }
         const newBalance = user.balance + parseInt(depositAmount)
         const updateUser = await User.findOneAndUpdate({ email }, { balance: newBalance }, { new: true })
-        if (updateUser) res.send(`Amount deposited : ${depositAmount}. Balance: ${updateUser.balance}`)
+        if (updateUser) {
+            const transHistory = await new TransactionHistory(history)
+            await transHistory.save()
+            res.send(`Amount deposited : ${depositAmount}. Balance: ${updateUser.balance}`)
+        }
     } else {
         res.redirect('/')
     }
 })
 
-app.post('/moneytrans', async(req, res, next) => {
+app.post('/moneytrans', isAuthenticated, async(req, res, next) => {
     const { email } = req.cookies.userData
     const receiverEmail = req.body.email
     const transferAmount = req.body.transferAmount
     const sender = await User.findOne({ email })
     const receiver = await User.findOne({ email: receiverEmail })
-    if (sender && receiver) {
+    if (sender && receiver && (sender.email !== receiver.email)) {
+        const history = {
+            from: sender._id,
+            fromEmail: sender.email,
+            to: receiver._id,
+            toEmail: receiver.email,
+            type: 'moneytrans',
+            message: `Transferred ${transferAmount} Rs. to ${receiver.email}`
+        }
         const senderBalance = sender.balance
         if (senderBalance > transferAmount) {
             const newAmount = senderBalance - parseInt(transferAmount)
             const updatedSender = await User.findOneAndUpdate({ email }, { balance: newAmount }, { new: true })
             const newReceiverAmount = receiver.balance + parseInt(transferAmount)
             const updatedReciever = await User.findOneAndUpdate({ email: receiverEmail }, { balance: newReceiverAmount }, { new: true })
-            if (updatedSender && updatedReciever) res.send("Transfer completed successfully")
-            else
+            if (updatedSender && updatedReciever) {
+                const transHistory = await new TransactionHistory(history)
+                await transHistory.save()
+                res.send("Transfer completed successfully")
+            } else
                 res.send("Something went wrong!!")
         } else
             res.send("Not enough balance")
-    } else
-        res.send("Can't find receiver")
-    res.send(req.body)
+    } else {
+        res.send("Something went wrong. Please check your details carefully")
+        res.end()
+    }
+    // res.send(req.body)
 })
 
-app.listen(3000, () => {
-    console.log("Listening on port 3000");
+const port = 8080 | process.env.PORT
+app.listen(8080, () => {
+    console.log(`Listening on port ${port}`);
 })
